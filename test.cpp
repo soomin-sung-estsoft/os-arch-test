@@ -16,9 +16,13 @@ ArchitectureType GetOSArchitecture()
 {
     static ArchitectureType arch = []() {
         using FnIsWow64Process2 = BOOL(WINAPI*)(HANDLE, USHORT*, USHORT*);
-        auto pIsWow64Process2 = reinterpret_cast<FnIsWow64Process2>(
-            GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "IsWow64Process2")
-        );
+        FnIsWow64Process2 pIsWow64Process2 = nullptr;
+        const HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
+        if (kernel) {
+            pIsWow64Process2 = reinterpret_cast<FnIsWow64Process2>(
+                GetProcAddress(kernel, "IsWow64Process2")
+            );
+        }
 
         if (pIsWow64Process2) {
             USHORT processMachine = 0;
