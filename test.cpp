@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <windows.h>
 
 namespace util {
@@ -73,5 +74,5 @@ ArchitectureType GetOSArchitecture()
 int main()
 {
     const auto arch = util::GetOSArchitecture();
-    return arch == util::ArchitectureType::at_x64 ? 0 : 1;
+    return arch == util::ArchitectureType::at_x64 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
