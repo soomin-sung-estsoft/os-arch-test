@@ -10,6 +10,8 @@ enum class ArchitectureType {
     at_arm64,
 };
 
+// Detect the current OS architecture using IsWow64Process2 when available,
+// otherwise fall back to GetNativeSystemInfo.
 ArchitectureType GetOSArchitecture()
 {
     static ArchitectureType arch = []() {

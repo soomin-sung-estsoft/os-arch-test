@@ -18,7 +18,13 @@ jobs:
       - name: Set up MSVC environment and build
         shell: cmd
         run: |
-          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property installationPath`) do set VSPATH=%%i
+          set VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe
+          if not exist "%VSWHERE%" set VSWHERE=%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe
+          if not exist "%VSWHERE%" (
+            for /f "usebackq tokens=*" %%p in (`where vswhere.exe`) do set VSWHERE=%%p
+          )
+          if not exist "%VSWHERE%" exit /b 1
+          for /f "usebackq tokens=*" %%i in (`"%VSWHERE%" -latest -products * -property installationPath`) do set VSPATH=%%i
           if not defined VSPATH exit /b 1
           call "%VSPATH%\VC\Auxiliary\Build\vcvars64.bat"
           cl /EHsc test.cpp
