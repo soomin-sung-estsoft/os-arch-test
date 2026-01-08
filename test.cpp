@@ -17,6 +17,7 @@ ArchitectureType GetOSArchitecture()
     static ArchitectureType arch = []() {
         using FnIsWow64Process2 = BOOL(WINAPI*)(HANDLE, USHORT*, USHORT*);
         FnIsWow64Process2 pIsWow64Process2 = nullptr;
+        // kernel32.dll should always be loaded, but check defensively before querying.
         const HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
         if (kernel) {
             pIsWow64Process2 = reinterpret_cast<FnIsWow64Process2>(
