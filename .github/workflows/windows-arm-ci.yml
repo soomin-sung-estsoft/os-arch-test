@@ -1,0 +1,22 @@
+name: Windows tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  windows-tests:
+    name: Windows 11 ARM
+    runs-on: [self-hosted, Windows, ARM64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Show environment
+        shell: pwsh
+        run: |
+          Write-Host "OS: $([System.Environment]::OSVersion.VersionString)"
+          Write-Host "Architecture: $env:PROCESSOR_ARCHITECTURE"
+      - name: Run tests
+        shell: pwsh
+        run: |
+          Write-Host "No automated tests are defined for this repository yet."
