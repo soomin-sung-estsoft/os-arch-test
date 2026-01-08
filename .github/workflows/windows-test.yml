@@ -18,6 +18,7 @@ jobs:
         shell: cmd
         run: |
           set VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe
+          rem Fallback in case Visual Studio is installed under ProgramFiles.
           if not exist "%VSWHERE%" set VSWHERE=%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe
           if not exist "%VSWHERE%" (
             echo vswhere.exe not found

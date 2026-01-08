@@ -15,11 +15,11 @@ enum class ArchitectureType {
 // otherwise fall back to GetNativeSystemInfo.
 ArchitectureType GetOSArchitecture()
 {
-    // Static local initialization is thread-safe in C++11 and later (used by MSVC).
+    // Static local initialization is thread-safe in C++11 and later.
     static ArchitectureType arch = []() {
         using FnIsWow64Process2 = BOOL(WINAPI*)(HANDLE, USHORT*, USHORT*);
         FnIsWow64Process2 pIsWow64Process2 = nullptr;
-        // kernel32.dll is typically loaded in most Windows processes, but check defensively before querying.
+        // kernel32.dll is always loaded in Windows processes; check defensively before querying.
         const HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
         if (kernel) {
             pIsWow64Process2 = reinterpret_cast<FnIsWow64Process2>(
