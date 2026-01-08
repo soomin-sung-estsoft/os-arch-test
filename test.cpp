@@ -15,6 +15,7 @@ enum class ArchitectureType {
 // otherwise fall back to GetNativeSystemInfo.
 ArchitectureType GetOSArchitecture()
 {
+    // Static local initialization is thread-safe in C++11 and later (used by MSVC).
     static ArchitectureType arch = []() {
         using FnIsWow64Process2 = BOOL(WINAPI*)(HANDLE, USHORT*, USHORT*);
         FnIsWow64Process2 pIsWow64Process2 = nullptr;
