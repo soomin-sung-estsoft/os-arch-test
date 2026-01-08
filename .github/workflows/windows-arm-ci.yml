@@ -2,12 +2,15 @@ name: Windows tests
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
   windows-tests:
     name: Windows 11 ARM
     runs-on: [self-hosted, Windows, ARM64]
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
