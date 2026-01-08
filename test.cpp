@@ -19,7 +19,7 @@ ArchitectureType GetOSArchitecture()
     static ArchitectureType arch = []() {
         using FnIsWow64Process2 = BOOL(WINAPI*)(HANDLE, USHORT*, USHORT*);
         FnIsWow64Process2 pIsWow64Process2 = nullptr;
-        // kernel32.dll is always loaded in Windows processes; check defensively before querying.
+        // kernel32.dll is always loaded in Windows processes, but GetModuleHandleW can still fail; check defensively before querying.
         const HMODULE kernel = GetModuleHandleW(L"kernel32.dll");
         if (kernel) {
             pIsWow64Process2 = reinterpret_cast<FnIsWow64Process2>(
@@ -31,22 +31,22 @@ ArchitectureType GetOSArchitecture()
             USHORT processMachine = 0;
             USHORT nativeMachine = 0;
 
-            if (pIsWow64Process2(GetCurrentProcess(), &processMachine, &nativeMachine)) {
-                switch (nativeMachine) {
-                case IMAGE_FILE_MACHINE_I386:
-                    return ArchitectureType::at_x86;
-                case IMAGE_FILE_MACHINE_AMD64:
-                    return ArchitectureType::at_x64;
-                case IMAGE_FILE_MACHINE_ARMNT:
-                    return ArchitectureType::at_arm32;
-                case IMAGE_FILE_MACHINE_ARM64:
-                    return ArchitectureType::at_arm64;
-                default:
-                    return ArchitectureType::at_unknown;
-                }
+            if (!pIsWow64Process2(GetCurrentProcess(), &processMachine, &nativeMachine)) {
+                return ArchitectureType::at_unknown;
             }
 
-            return ArchitectureType::at_unknown;
+            switch (nativeMachine) {
+            case IMAGE_FILE_MACHINE_I386:
+                return ArchitectureType::at_x86;
+            case IMAGE_FILE_MACHINE_AMD64:
+                return ArchitectureType::at_x64;
+            case IMAGE_FILE_MACHINE_ARMNT:
+                return ArchitectureType::at_arm32;
+            case IMAGE_FILE_MACHINE_ARM64:
+                return ArchitectureType::at_arm64;
+            default:
+                return ArchitectureType::at_unknown;
+            }
         }
         else {
             SYSTEM_INFO si{};
