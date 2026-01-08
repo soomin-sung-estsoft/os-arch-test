@@ -36,6 +36,8 @@ ArchitectureType GetOSArchitecture()
                     return ArchitectureType::at_unknown;
                 }
             }
+
+            return ArchitectureType::at_unknown;
         }
         else {
             SYSTEM_INFO si{};
@@ -54,8 +56,6 @@ ArchitectureType GetOSArchitecture()
                 return ArchitectureType::at_unknown;
             }
         }
-
-        return ArchitectureType::at_unknown;
     }();
 
     return arch;
