@@ -20,14 +20,14 @@ jobs:
           set VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe
           if not exist "%VSWHERE%" set VSWHERE=%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe
           if not exist "%VSWHERE%" (
-            for /f "usebackq tokens=*" %%p in (`where vswhere.exe 2^>nul`) do set VSWHERE=%%p
-          )
-          if not exist "%VSWHERE%" (
             echo vswhere.exe not found
             exit /b 1
           )
           for /f "usebackq tokens=*" %%i in (`"%VSWHERE%" -latest -products * -property installationPath`) do set VSPATH=%%i
-          if not defined VSPATH exit /b 1
+          if not defined VSPATH (
+            echo Visual Studio installation path not found
+            exit /b 1
+          )
           call "%VSPATH%\VC\Auxiliary\Build\vcvars64.bat"
           cl /EHsc /W4 /O2 test.cpp
 
